@@ -4,24 +4,37 @@ import { products } from "../assets/assets";
 export const ShopContext = createContext();
 
 const ShopContextProvider = (props) => {
-	const currency = "$";
-	const delivery_fee = 10;
-	const [search, setSearch] = useState('');
-	const [showSearch, setShowSearch] = useState(false);
+  const currency = "$";
+  const delivery_fee = 10;
+  const [search, setSearch] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
+  const [cartItems, setCartItems] = useState({});
 
-	const value = {
-		products,
-		currency,
-		delivery_fee,
-		search,
-		setSearch,
-		showSearch,
-		setShowSearch, // Added setShowSearch here
-	};
+  const addToCart = async (itemId, size) => {
+    let cartData = structuredClone(cartItems);
 
-	return (
-		<ShopContext.Provider value={value}>{props.children}</ShopContext.Provider>
-	);
+    if (cartData[itemId]) {
+      cartData[itemId][size] = (cartData[itemId][size] || 0) + 1;
+    } else {
+      cartData[itemId] = { [size]: 1 };
+    }
+
+    setCartItems(cartData);
+  };
+
+  const value = {
+    products,
+    currency,
+    delivery_fee,
+    search,
+    setSearch,
+    showSearch,
+    setShowSearch,
+    cartItems,
+    addToCart,
+  };
+
+  return <ShopContext.Provider value={value}>{props.children}</ShopContext.Provider>;
 };
 
 export default ShopContextProvider;

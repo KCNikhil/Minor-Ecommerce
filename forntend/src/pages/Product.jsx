@@ -6,7 +6,7 @@ import RelatedProducts from "../components/RelatedProducts";
 
 const Product = () => {
 	const { productId } = useParams();
-	const { products, currency } = useContext(ShopContext);
+	const { products, currency, addToCart } = useContext(ShopContext);
 	const [productData, setProductData] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [size, setSize] = useState("");
@@ -15,15 +15,15 @@ const Product = () => {
 	// Fetch product data based on productId
 	useEffect(() => {
 		setLoading(true);
-		if (products?.length > 0) {
-			const product = products.find((item) => item._id === productId);
-			if (product) {
-				setProductData(product);
-				setImage(product.image[0]); // Default image
-			}
+		const product = products.find((item) => item._id === productId);
+		if (product) {
+			setProductData(product);
+			setImage(product.image[0]); // Default image
+		} else {
+			setProductData(null); // Product not found
 		}
 		setLoading(false);
-	}, [productId, products]);
+	}, [productId, products]); // Ensure loading is reset when productId or products change
 
 	if (loading) return <div>Loading...</div>;
 
@@ -107,11 +107,14 @@ const Product = () => {
 								<p className="text-gray-500">No sizes available</p>
 							)}
 						</div>
-						<button className="bg-black text-white px-8 py-3 text-sm active:bg-gray-700 ">
+						<button
+							onClick={() => addToCart(productData._id, size)}
+							className="bg-black text-white px-8 py-3 text-sm active:bg-gray-700 "
+						>
 							ADD TO CART
 						</button>
 						<hr className="mt-8 sm:w-4/5" />
-						<div className="text-sm text-gray-500 mt-5 flex flex-col gap 1">
+						<div className="text-sm text-gray-500 mt-5 flex flex-col gap-1">
 							<p>100% Original Product.</p>
 							<p>Cash on delivery is available on this product.</p>
 							<p>Easy return and exchange policy within 7 days.</p>
@@ -119,6 +122,7 @@ const Product = () => {
 					</div>
 				</div>
 			</div>
+
 			{/* Description and Review Section */}
 			<div className="mt-20">
 				<div className="flex">
@@ -127,12 +131,20 @@ const Product = () => {
 				</div>
 				<div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500">
 					<p>An e-commerce website is very good; loved the purchases.</p>
-					<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium nostrum vitae aliquid aspernatur eum natus distinctio! Autem ipsam laboriosam at dolorum ea excepturi enim aliquam culpa nobis, earum suscipit ipsa?</p>
+					<p>
+						Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium
+						nostrum vitae aliquid aspernatur eum natus distinctio! Autem ipsam
+						laboriosam at dolorum ea excepturi enim aliquam culpa nobis, earum
+						suscipit ipsa?
+					</p>
 				</div>
 			</div>
-      {/* display related products */}
-      <RelatedProducts catogery={productData.catogery} subCatogery={productData.subCatogery}/>
 
+			{/* Display related products */}
+			<RelatedProducts
+				category={productData.category}
+				subCategory={productData.subCategory}
+			/>
 		</div>
 	);
 };
