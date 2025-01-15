@@ -4,8 +4,14 @@ import { Link, NavLink } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 
 const Navbar = () => {
-	const [visible, setVisible] = useState(false);
-	const { setShowSearch } = useContext(ShopContext);
+	const [visible, setVisible] = useState(false); // State for small screen menu visibility
+	const { setShowSearch, getCartCount } = useContext(ShopContext); // Context values
+
+	// Helper function for NavLink styles
+	const navLinkStyle = ({ isActive }) =>
+		`flex flex-col items-center gap-1 ${
+			isActive ? "border-b-4 border-black pb-2" : ""
+		}`;
 
 	return (
 		<div className="flex items-center justify-between py-5 font-medium relative">
@@ -16,57 +22,31 @@ const Navbar = () => {
 
 			{/* Navigation Links for Large Screens */}
 			<ul className="hidden sm:flex gap-5 text-sm text-gray-700">
-				<NavLink
-					to="/"
-					className="flex flex-col items-center gap-1"
-					end
-					style={({ isActive }) => ({
-						borderBottom: isActive ? "3px solid black" : "none", // Thicker underline
-						paddingBottom: isActive ? "5px" : "0", // Consistency in height
-					})}
-				>
+				<NavLink to="/" className={navLinkStyle} end>
 					<p>HOME</p>
 				</NavLink>
-				<NavLink
-					to="/collection"
-					className="flex flex-col items-center gap-1"
-					style={({ isActive }) => ({
-						borderBottom: isActive ? "3px solid black" : "none", // Thicker underline
-						paddingBottom: isActive ? "5px" : "0", // Consistency in height
-					})}
-				>
+				<NavLink to="/collection" className={navLinkStyle}>
 					<p>COLLECTION</p>
 				</NavLink>
-				<NavLink
-					to="/about"
-					className="flex flex-col items-center gap-1"
-					style={({ isActive }) => ({
-						borderBottom: isActive ? "3px solid black" : "none", // Thicker underline
-						paddingBottom: isActive ? "5px" : "0", // Consistency in height
-					})}
-				>
+				<NavLink to="/about" className={navLinkStyle}>
 					<p>ABOUT</p>
 				</NavLink>
-				<NavLink
-					to="/contact"
-					className="flex flex-col items-center gap-1"
-					style={({ isActive }) => ({
-						borderBottom: isActive ? "3px solid black" : "none", // Thicker underline
-						paddingBottom: isActive ? "5px" : "0", // Consistency in height
-					})}
-				>
+				<NavLink to="/contact" className={navLinkStyle}>
 					<p>CONTACT</p>
 				</NavLink>
 			</ul>
 
 			{/* Right-side Icons */}
 			<div className="flex items-center gap-4">
+				{/* Search Icon */}
 				<img
 					onClick={() => setShowSearch(true)}
 					src={assets.search_icon}
 					className="w-5 cursor-pointer"
 					alt="Search Icon"
 				/>
+
+				{/* Profile Dropdown */}
 				<div className="group relative">
 					<img
 						className="w-5 cursor-pointer"
@@ -82,10 +62,11 @@ const Navbar = () => {
 					</div>
 				</div>
 
+				{/* Cart Icon */}
 				<Link to="/cart" className="relative">
 					<img src={assets.cart_icon} className="w-5 min-w-5" alt="Cart Icon" />
 					<p className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]">
-						10
+						{getCartCount() || 0}
 					</p>
 				</Link>
 
